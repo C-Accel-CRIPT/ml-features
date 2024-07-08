@@ -83,7 +83,7 @@ data_process_functions = {
     ML_Library.PYTORCH : pytorch_process}
 
 #Preprocess = [Normalization, Outlier Removal, One Hot Encoding]
-def ML_Data_Process(SearchProperties, FeatureProperties, LabelProperty, Preprocess, Library):
+def ML_Data_Process(SearchParameter, FeatureProperties, LabelProperties, Library, Preprocess=False, limit=1000):
     
     #SKLEARN uses array like objects for fit model
 
@@ -91,7 +91,93 @@ def ML_Data_Process(SearchProperties, FeatureProperties, LabelProperty, Preproce
 
     #PYTORCH uses torchvision.datasets.mnist.FasionMNIST
 
-    materials_list = cript.Search(*Insert code to search for materials with Properties*)
+    load_dotenv()
+
+    result_list = Search(node="Material", q=SearchParameter, filters={"limit": limit})
+
+    get_smile = False
+
+    if "smiles" in FeatureProperties or "smiles" in LabelProperties:
+        get_smile = True
+
+    material_list = []
+
+    for material in result_list:
+
+        mat_dic = {}
+        
+        if get_smile == True:
+            
+            mat_dic["smiles"] = material["smiles"]
+
+        for property in material["property"]:
+
+            if (property["key"] in FeatureProperties or property["key"] in LabelProperties) and property['value'] != '':
+                
+                try:
+                    mat_dic[property["key"]] = property["value"]
+                
+                except:
+                    pass
+
+        add = True
+
+        if len(mat_dic) > 0:
+            
+            for prop in FeatureProperties:
+
+                if prop not in mat_dic.keys():
+                    add = False
+                    break
+            
+            for prop in LabelProperties:
+
+                if prop not in mat_dic.keys():
+                    add = False
+                    break
+
+            if add == True:
+                material_list.append(mat_dic.copy())
+
+    feature_list = []
+    label_list = []
+
+    print(material_list)
+
+    for material in material_list:
+
+        mat_feat_list = []
+        mat_label_list = []
+
+        for prop in FeatureProperties:
+            
+            mat_feat_list.append(material[prop])
+
+        for prop in LabelProperties:
+            
+            mat_label_list.append(material[prop])
+
+        feature_list.append(mat_feat_list.copy())
+        label_list.append(mat_label_list.copy())
+
+    if Preprocess == False:
+
+        Preprocess = [False, False, False]
+
+    data = (feature_list, label_list)
+
+    #Format for raw data = tuple with features as list of lists as first element, label values for second element
+    return data_process_functions[Library](data, Preprocess)
+
+""" def ML_Data_Process2(SearchProperties, FeatureProperties, LabelProperty, Preprocess, Library):
+    
+    #SKLEARN uses array like objects for fit model
+
+    #TENSORFLOW uses pandas.core.frame.DataFrame
+
+    #PYTORCH uses torchvision.datasets.mnist.FasionMNIST
+
+    #materials_list = cript.Search(*Insert code to search for materials with Properties*)
 
     feature_matrix = []
 
@@ -146,28 +232,7 @@ def ML_Data_Process(SearchProperties, FeatureProperties, LabelProperty, Preproce
     feature_matrix_np = np.transpose(feature_matrix_np)
 
     #Format for raw data = tuple with features as list of lists as first element, label values for second element
-    return data_process_functions[Library]("regression", raw_data)
-
-def ML_Data_Process2(ML_Type, Data, Library, Preprocess=None):
-    
-    #SKLEARN uses array like objects for fit model
-
-    #TENSORFLOW uses pandas.core.frame.DataFrame
-
-    #PYTORCH uses torchvision.datasets.mnist.FasionMNIST
-
-    if Preprocess == None:
-
-        if ML_Type.lower() == "regression":
-
-            Preprocess = [False, True, False]
-
-        elif ML_Type.lower() == "classification":
-
-            Preprocess = [False, False, True]
-
-    #Format for raw data = tuple with features as list of lists as first element, label values for second element
-    return data_process_functions[Library](Data, Preprocess)
+    return data_process_functions[Library]("regression", raw_data) """
 
 
 
