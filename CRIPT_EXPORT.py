@@ -57,6 +57,8 @@ def sklearn_process(raw_data, preprocess):
 
         feature_OneHot = OneHotEncoder(new_data[0])
 
+        new_data[0] = feature_OneHot
+
     return new_data
 
 def tensorflow_process(raw_data, preprocess):
@@ -68,8 +70,61 @@ def tensorflow_process(raw_data, preprocess):
 def pytorch_process(raw_data, preprocess):
 
     import torch
+
+    from torch.utils.data import Dataset
+
+    if preprocess != False and preprocess != [False, False, False]:
+
+        from torchvision.transforms import v2
+
+    tensor_X = torch.tensor(raw_data[0])
+
+    tensor_y = torch.tensor(raw_data[1])
+
+    class MaterialDataset(Dataset):
+
+        def __init__(self, X, y, transform, transform_target):
+
+            self.labels = y
+            self.features = X
+            self.transform = transform
+            self.transform_target = transform_target
+        
+        def __len__(self):
+            return len(self.labels)
+        
+        def __getitem__(self, idx):
+            
+            feature = self.features[idx]
+            label = self.features[idx]
+
+            if self.transform:
+                feature = self.transform(feature)
+
+            if self.transform_target:
+                feature = self.transform(label)
+            
+            return feature, label
+
+    """     if type(preprocess[0]) == list:
+
+        preprocess[0] = v2.Compose(preprocess[0])
+
+    elif preprocess[0] == False:
+        preprocess[0] = None
+
+    if type(preprocess[1]) == list:
+
+        preprocess[1] = v2.Compose(preprocess[1])
+
+    elif preprocess[1] == False:
+        preprocess[1] = None """
+        
+    #mat_dataset = MaterialDataset(tensor_X, tensor_y, preprocess[0], preprocess[1])
+
+    mat_dataset = MaterialDataset(tensor_X, tensor_y, None, None)
     
-    return None
+    return mat_dataset
 
 class ML_Library(Enum):
 
