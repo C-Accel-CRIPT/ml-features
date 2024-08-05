@@ -3,32 +3,6 @@ from enum import Enum
 import numpy as np
 from dotenv import load_dotenv
 
-""" def ML_Data_Save(SearchProperties, FeatureProperties, LabelProperty):
-
-    import csv
-
-    materials_list = cript.search(*Insert code to search for materials with Properties*)
-
-    *Insert code that gets relevant information from materials_list*
-
-    *Insert code that splits relevant information into training and test data sets*
-
-    materials_no_outliers = 
-    
-    if FileFormat == "csv":
-        
-        train_file = open("training_data.csv", "a")
-        test_file = open("test_data.csv", "a")
-
-        train_writer = csv.writer(train_file)
-        test_writer = csv.writer(test_file)
-
-        train_writer.writerows(training data)
-        test_writer.writerows(test data)
-
-        train_file.close()
-        test_file.close() """
-
 def sklearn_process(raw_data, preprocess):
 
     import sklearn
@@ -273,71 +247,6 @@ def ML_Data_Process(FeatureProperties, LabelProperties, Library, SearchParameter
 
     #Format for raw data = tuple with features as list of lists as first element, label values for second element
     return data_process_functions[Library](data, Preprocess)
-
-""" def ML_Data_Process2(SearchProperties, FeatureProperties, LabelProperty, Preprocess, Library):
-    
-    #SKLEARN uses array like objects for fit model
-
-    #TENSORFLOW uses pandas.core.frame.DataFrame
-
-    #PYTORCH uses torchvision.datasets.mnist.FasionMNIST
-
-    #materials_list = cript.Search(*Insert code to search for materials with Properties*)
-
-    feature_matrix = []
-
-    label_vector = []
-
-    property_types = ["INSERT LIST OF PROPERTY TYPES"]
-
-    for property in FeatureProperties:
-
-        prop_list = []
-
-        min = 10**10
-        max = -(10**10)
-        prop_type = None
-
-        for material in materials_list:
-
-            try:
-
-                prop_list.append(material.property[property].value)
-
-                label_vector.append(material.property[LabelProperty].value)
-
-                #Might use this for normalization preprocessing step
-                #Could cause complications with how the machine learning library user is using interprets the data
-
-                #if material.property[property].type == float:
-                    
-                    #prop_type = float
-
-                    #if material.property[property].value > max:
-
-                        #max = material.property[property].value
-
-                    #if material.property[property].value < min:
-
-                        #min = material.property[property].value 
-
-            except:
-                print()
-        
-        #if Normalization == True and prop_type == float:
-
-        #    for i in range(len(prop_list)):
-        #        prop_list[i] = (prop_list[i] - min) / (max - min)
-
-        feature_matrix.append(prop_list.copy())
-
-    
-    feature_matrix_np = np.array(feature_matrix)
-
-    feature_matrix_np = np.transpose(feature_matrix_np)
-
-    #Format for raw data = tuple with features as list of lists as first element, label values for second element
-    return data_process_functions[Library]("regression", raw_data) """
 
 
 
