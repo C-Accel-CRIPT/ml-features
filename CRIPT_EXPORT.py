@@ -60,12 +60,30 @@ def sklearn_process(raw_data, preprocess):
         new_data[0] = feature_OneHot
 
     return new_data
-
+    
 def tensorflow_process(raw_data, preprocess):
 
-    import tensorflow
-    
-    pass
+    import tensorflow as tf
+    import numpy as np
+    from keras import layers
+
+    new_data = [np.array(raw_data[0]), np.array(raw_data[1])]
+
+    if preprocess != [False, False, False]:
+
+        if type(preprocess[0]) == list:
+            
+            for i in preprocess[0]:
+
+                new_data[0] = i(new_data[0])
+        
+        elif preprocess[0] == True:
+
+            layer = layers.Normalization()
+            layer.adapt(new_data[0])
+            new_data[0] = layer(new_data[0])
+
+    return new_data
 
 def pytorch_process(raw_data, preprocess):
 
